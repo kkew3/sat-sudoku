@@ -13,8 +13,13 @@ Four constraints are applied:
 To enforce these constraints, the filling of each cell is modelled as a 9D 0/1 vector, such that it's filled with `i` if the `i`th element is 1.
 Clearly, it must satisfy that the sum of all elements is 1.
 To enforce the different digit constraints, it must also satisfy that the sum of `j`th element of all vectors in a row/column/sub-box is 1, for all `j` from 1 to 9.
-This way, we obtain a number of equality constraints in such form as: `x_{i1} + x_{i2} + ... + x_{ik} = 1`.
-Since each variable is either 0 or 1, we may interprete each equality constraint as a DNF: `(x_{i1} & ~x_{i2} & ... & ~x_{ik}) | (~x_{i1} & x_{i2} & ... & ~x_{ik}) | ... | (~x_{i1} & ~x_{i2} & ... & x_{ik})`.
+This way, we obtain a number of equality constraints in such form as:
+
+![x\_{i1} + x\_{i2} + ... + x\_{ik} = 1](doc/eq1.png)
+
+Since each variable is either 0 or 1, we may interprete each equality constraint as a DNF:
+
+![(x\_{i1} & ~x\_{i2} & ... & ~x\_{ik}) | (~x\_{i1} & x\_{i2} & ... & ~x\_{ik}) | ... | (~x\_{i1} & ~x\_{i2} & ... & x\_{ik})](doc/eq2.png)
 
 Now the problem is that `PicoSAT` solver requires CNF whereas we have only DNF, and it's well known that the exact conversion from DNF to CNF is NP-complete.
 Note that here we cannot relax so that only satisfiability is retained to overcome the NP-completeness, because we have to find the solution.
@@ -69,3 +74,7 @@ INFO|2019-06-14 17:09:30,530|
 5 8 3 2 6 1 4 7 9
 1 7 9 5 8 4 6 3 2
 ```
+
+## Related project
+
+Another SAT-based sudoku solver can be found in [here](https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py), which may differ from the method described in this repository (I didn't read into it).
