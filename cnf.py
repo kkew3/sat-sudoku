@@ -1,4 +1,5 @@
 import itertools
+import math
 import string
 import json
 import re
@@ -45,14 +46,19 @@ def xor2cnf(vars_):
 
 
 def cnf2str(cclauses):
-    assert max(map(abs, itertools.chain.from_iterable(cclauses))) <= 26, cclauses
-    letters = string.ascii_lowercase
-    digits = range(1, 27)
-    tr = dict(zip(digits, letters))
-    tr.update(dict(zip([(-x) for x in range(1, 27)],
-                       [f'(not {x})' for x in letters])))
-    return ' and '.join([('(' + ' or '.join([tr[x] for x in cl]) + ')')
-                         for cl in cclauses])
+    n_vars = abs(max(itertools.chain.from_iterable(cclauses), key=abs))
+    width = math.ceil(math.log(n_vars) / math.log(26))
+
+    def lcombs_():
+        return map(''.join, itertools.product(*[string.ascii_lowercase
+                                                for _ in range(width)]))
+
+    digits = range(1, n_vars + 1)
+    tr = dict(zip(digits, (''.join(('var', x)) for x in lcombs_())))
+    tr.update(dict(zip(((-x) for x in range(1, n_vars + 1)),
+                       (f'(~var{x})' for x in lcombs_()))))
+    return ' & '.join([('(' + ' | '.join([tr[x] for x in cl]) + ')')
+                       for cl in cclauses])
 
 
 def _make_sed_script(tr_mapping):
