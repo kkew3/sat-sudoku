@@ -1,7 +1,3 @@
 numpy
-ipython
-sympy
 pycosat
 pytest
-line_profiler
-pylint
