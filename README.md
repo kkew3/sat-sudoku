@@ -36,8 +36,8 @@ The results are then interpreted and printed as a sudoku board.
 ```bash
 python3 -m virtualenv rt
 . rt/bin/activate
-pip install -r requirements.txt
 cd pycosat-0.6.3 && python setup.py install
+pip install -r requirements.txt
 ```
 
 # How to use
