@@ -74,7 +74,14 @@ def resolve_solution(N_, board, sol):
 
 def make_parser():
     parser = argparse.ArgumentParser(description='Solve sudoku')
-    parser.add_argument('filename', metavar='FILE',
+    parser.add_argument('-c', '--write-clauses-to', dest='cltofile',
+                        metavar='FILE',
+                        help='write the JSON-represented CNF clauses to FILE')
+    parser.add_argument('-H', dest='human_readable', action='store_true',
+                        help='write human readable representation rather '
+                             'rather than JSON; only effective when `-c\' is '
+                             'presented')
+    parser.add_argument('filename', metavar='BOARD_FILE',
                         help='CSV file that describe the sudoku to solve; '
                              '`0\' signifies blank cell and `1\'..`9\' the '
                              'digits')
@@ -111,7 +118,24 @@ def main():
         varbox = varboard[ix*B_SH:(1+ix)*B_SH, iy*B_SW:(1+iy)*B_SW]
         cclauses.extend(make_cnf_clauses_by_group(N, box, varbox))
 
-    logging.info(f'Converted sudoku into CNF; {len(cclauses)} clauses in total')
+    n_vars_ = abs(max(itertools.chain.from_iterable(cclauses), key=abs))
+    logging.info('Converted sudoku into CNF; %d clauses in total; '
+                 '%d variables in total',
+                 len(cclauses), n_vars_)
+    if args.cltofile:
+        try:
+            with open(args.cltofile, 'w') as outfile:
+                if args.human_readable:
+                    outfile.write(cnf.cnf2str(cclauses))
+                else:
+                    json.dump(cclauses, outfile)
+                outfile.write('\n')
+        except OSError:
+            logging.exception('Failed to write CNF clauses to "%s"',
+                              args.cltofile)
+        else:
+            logging.info('Written CNF clauses to "%s"', args.cltofile)
+
     solution = pycosat.solve(cclauses)
     logging.info('Solved')
     solved_board = resolve_solution(N, board, solution)
