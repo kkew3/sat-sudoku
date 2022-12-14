@@ -34,5 +34,5 @@ Another SAT-based sudoku solver can be found in [here](https://github.com/Contin
 
 ## References
 
-- A Sudoku-Solver for Large Puzzles using SAT
-- Sudoku as a SAT Problem
+- [*A Sudoku-Solver for Large Puzzles using SAT*](https://easychair.org/publications/open/VF3m)
+- [*Sudoku as a SAT Problem*](http://anytime.cs.umass.edu/aimath06/proceedings/P34.pdf)
