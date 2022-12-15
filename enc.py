@@ -142,6 +142,7 @@ class MinimalEncoder(BasicEncoder):
                                self.block_uni(), self.assigned())
 
 
+# Too slow; not used
 def basic_filtering(assigned_encoding, clauses):
     """
     Reference: A Sudoku-Solver for Large Puzzles using SAT

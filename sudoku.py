@@ -1,5 +1,4 @@
 import math
-import os
 import argparse
 
 import pycosat
