@@ -2,3 +2,6 @@ rt/
 __pycache__/
 *.swp
 TODO
+build/
+encc.cpp
+*.so

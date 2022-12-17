@@ -1,10 +1,13 @@
 import math
 import argparse
+import contextlib
+import time
 
 import pycosat
 import numpy as np
 
 import enc
+import encc
 
 
 def disp_board(board, outfile):
@@ -30,6 +33,14 @@ def validate_board(board):
             assert np.unique(np.ravel(board[i:i + nsq, j:j + nsq])).size == n
 
 
+@contextlib.contextmanager
+def stdout_timer():
+    begin = time.perf_counter()
+    yield
+    end = time.perf_counter()
+    print('Consumed {} sec'.format(end - begin))
+
+
 def make_parser():
     parser = argparse.ArgumentParser(
             description='Solve sudoku and write result to file.')
@@ -38,22 +49,53 @@ def make_parser():
     return parser
 
 
-def main():
+def main_enc():
     args = make_parser().parse_args()
+
     print('Loading board ...')
-    board = np.loadtxt(args.infile, dtype=int, delimiter=',')
+    with stdout_timer():
+        board = np.loadtxt(args.infile, dtype=int, delimiter=',')
+
     print('Encoding board ...')
-    xencoder = enc.ExtendedEncoder(board)
-    clauses = xencoder.encode()
-    mvars = enc.VariableManager()
-    cclauses = list(mvars.convert(clauses))
+    with stdout_timer():
+        xencoder = enc.ExtendedEncoder(board)
+        clauses = xencoder.encode()
+        mvars = enc.VariableManager()
+        cclauses = list(mvars.convert(clauses))
+
     print('Start solving ...')
-    solution = pycosat.solve(cclauses)
+    with stdout_timer():
+        solution = pycosat.solve(cclauses)
+
     assert not isinstance(solution, str), solution
     for lit in mvars.back(solution):
         x = lit.x - 1
         y = lit.y - 1
-        assert lit.v > 0
+        assert board[x, y] == 0 or board[x, y] == lit.v, lit
+        board[x, y] = lit.v
+    validate_board(board)
+    np.savetxt(args.outfile, board, fmt='%d', delimiter=',')
+
+
+def main_encc():
+    args = make_parser().parse_args()
+
+    print('Loading board ...')
+    with stdout_timer():
+        board = np.loadtxt(args.infile, dtype=int, delimiter=',')
+
+    print('Encoding board ...')
+    with stdout_timer():
+        cclauses = encc.extended_encode(board)
+
+    print('Start solving ...')
+    with stdout_timer():
+        solution = pycosat.solve(cclauses)
+
+    assert not isinstance(solution, str), solution
+    for lit in encc.interpret_solution(board.shape[0], solution):
+        x = lit.x - 1
+        y = lit.y - 1
         assert board[x, y] == 0 or board[x, y] == lit.v, lit
         board[x, y] = lit.v
     validate_board(board)
@@ -61,4 +103,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main_encc()

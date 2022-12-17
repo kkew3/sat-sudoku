@@ -16,8 +16,20 @@ Four constraints are applied:
 ```bash
 python3 -m virtualenv rt
 . rt/bin/activate
-cd pycosat-0.6.3 && python setup.py install
 pip install -r requirements.txt
+```
+
+### To use Python implementation
+
+Change the `main_encc()` at the last line of `sudoku.py` to `main_enc()`.
+
+### To use C++ implementation
+
+Comment out zero or more macro definitions in `define_macros` keyword argument in `setup.py` to redefine macros in C++ implementation.
+Then
+
+```
+python setup.py build_ext -if
 ```
 
 # How to use
@@ -30,9 +42,9 @@ An example of `SUDOKU_BOARD_FILE` is `example-boards/board.txt`.
 
 ## Related project
 
-Another SAT-based sudoku solver can be found in [here](https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py), which may differ from the method described in this repository (I didn't read into it).
+Another SAT-based sudoku solver can be found in [here](https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py), which seems to use the *minimal encoding* as found in this repo.
 
 ## References
 
-- [*A Sudoku-Solver for Large Puzzles using SAT*](https://easychair.org/publications/open/VF3m)
 - [*Sudoku as a SAT Problem*](http://anytime.cs.umass.edu/aimath06/proceedings/P34.pdf)
+- [*A Sudoku-Solver for Large Puzzles using SAT*](https://easychair.org/publications/open/VF3m): note on using the strategy of this paper can be found in source code `c_enc.cpp`.
