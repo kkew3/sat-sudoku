@@ -1,3 +1,4 @@
 rt/
 __pycache__/
+*.swp
 TODO
