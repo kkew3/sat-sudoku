@@ -32,7 +32,7 @@ Then
 python setup.py build_ext -if
 ```
 
-# How to use
+## How to use
 
 ```bash
 python sudoku.py SUDOKU_BOARD_FILE OUTPUT_FILE
