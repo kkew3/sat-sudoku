@@ -40,6 +40,22 @@ python sudoku.py SUDOKU_BOARD_FILE OUTPUT_FILE
 
 An example of `SUDOKU_BOARD_FILE` is `example-boards/board.txt`.
 
+### To use different sudoku encoding
+
+Change
+
+```python
+cclauses = encc.extended_encode(board)
+```
+
+to, e.g.,
+
+```python
+cclauses = encc.minimal_encode(board)
+```
+
+in `sudoku.py`.
+
 ## Related project
 
 Another SAT-based sudoku solver can be found in [here](https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py), which seems to use the *minimal encoding* as found in this repo.
